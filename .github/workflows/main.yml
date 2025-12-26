@@ -1,26 +1,30 @@
+name: Gerar APK SuperGente
+
 on:
-  workflow_dispatch: # Isso cria o botão para você gerar o APK quando quiser
+  workflow_dispatch: # Botão manual para gerar o APK
 
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      
-      - name: Set up JDK 17
+      - name: Checkout do Código
+        uses: actions/checkout@v4
+
+      - name: Configurar Java 17
         uses: actions/setup-java@v4
         with:
           java-version: '17'
           distribution: 'temurin'
-          
-      - name: Grant execute permission for gradlew
-        run: chmod +x gradlew
-        
-      - name: Build APK
-        run: ./gradlew assembleDebug
+          cache: 'gradle'
 
-      - name: Upload APK
+      - name: Corrigir permissão do Gradlew
+        run: chmod +x gradlew
+
+      - name: Fabricar o APK (Debug)
+        run: ./gradlew assembleDebug --stacktrace
+
+      - name: Disponibilizar APK para Download
         uses: actions/upload-artifact@v4
         with:
-          name: SuperGente-APK-Offline
+          name: SuperGente-App-Instalador
           path: app/build/outputs/apk/debug/app-debug.apk
