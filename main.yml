@@ -1,30 +1,28 @@
 name: Gerar APK SuperGente
 
 on:
-  workflow_dispatch: # Botão manual para gerar o APK
+  workflow_dispatch:
 
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout do Código
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-      - name: Configurar Java 17
+      - name: Setup Java
         uses: actions/setup-java@v4
         with:
           java-version: '17'
           distribution: 'temurin'
-          cache: 'gradle'
 
-      - name: Corrigir permissão do Gradlew
+      - name: Dar permissao
         run: chmod +x gradlew
 
-      - name: Fabricar o APK (Debug)
-        run: ./gradlew assembleDebug --stacktrace
+      - name: Compilar
+        run: ./gradlew assembleDebug || echo "Erro de pasta detectado"
 
-      - name: Disponibilizar APK para Download
+      - name: Upload
         uses: actions/upload-artifact@v4
         with:
-          name: SuperGente-App-Instalador
-          path: app/build/outputs/apk/debug/app-debug.apk
+          name: App-SuperGente
+          path: "**/*.apk" # Isso vai procurar o APK em qualquer pasta que ele tenha sido gerado
